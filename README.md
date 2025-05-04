@@ -36,7 +36,7 @@ Este proyecto es un conversor de monedas que utiliza la API de ExchangeRate-API 
 ## Estructura del proyecto
 
 - `src/conversor/ConversorMonedas.java`: Clase principal que contiene la lógica del conversor de monedas.
-- `src/conversor/TestConversorMonedas.java`: Clase de prueba para verificar el funcionamiento del conversor.
+
 
 ## Detalles técnicos
 
