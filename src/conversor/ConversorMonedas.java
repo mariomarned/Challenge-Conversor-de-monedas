@@ -7,6 +7,13 @@ import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+// Clase para representar la respuesta de la API
+class ExchangeRateResponse {
+    Map<String, Double> conversion_rates;
+}
 
 public class ConversorMonedas {
     private static final String API_KEY = "97f6df6d41ffc64497439553";
@@ -51,36 +58,18 @@ public class ConversorMonedas {
     }
     
     private void extraerTasasDeCambio(String jsonResponse) {
-        // Extracción manual de tasas de cambio del JSON
-        // Formato esperado: {"conversion_rates":{"USD":1,"ARS":870,...}}
-        
-        int startIndex = jsonResponse.indexOf("\"conversion_rates\"");
-        if (startIndex != -1) {
-            int ratesStart = jsonResponse.indexOf("{", startIndex);
-            int ratesEnd = jsonResponse.indexOf("}", ratesStart);
+        try {
+            Gson gson = new Gson();
+            ExchangeRateResponse response = gson.fromJson(jsonResponse, ExchangeRateResponse.class);
             
-            if (ratesStart != -1 && ratesEnd != -1) {
-                String ratesJson = jsonResponse.substring(ratesStart + 1, ratesEnd);
-                String[] rateEntries = ratesJson.split(",");
-                
-                for (String entry : rateEntries) {
-                    String[] keyValue = entry.split(":");
-                    if (keyValue.length == 2) {
-                        String currency = keyValue[0].trim().replace("\"", "");
-                        String valueStr = keyValue[1].trim();
-
-                        // Solo procesamos las monedas que nos interesan
-                        if (TASAS_PREDETERMINADAS.containsKey(currency)) {
-                            try {
-                                double rate = Double.parseDouble(valueStr);
-                                tasasDeCambio.put(currency, rate);
-                            } catch (NumberFormatException e) {
-                                System.out.println("Error al parsear tasa para " + currency + ": " + valueStr);
-                            }
-                        }
-                    }
+            // Procesar solo las monedas que nos interesan
+            for (String currency : TASAS_PREDETERMINADAS.keySet()) {
+                if (response.conversion_rates.containsKey(currency)) {
+                    tasasDeCambio.put(currency, response.conversion_rates.get(currency));
                 }
             }
+        } catch (Exception e) {
+            System.out.println("Error al procesar JSON: " + e.getMessage());
         }
     }
     
