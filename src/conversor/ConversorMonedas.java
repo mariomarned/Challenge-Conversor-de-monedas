@@ -22,7 +22,7 @@ public class ConversorMonedas {
         put("USD", 1.0);    // Dólar estadounidense
     }};
     
-    private Map<String, Double> tasasDeCambio;
+    private final Map<String, Double> tasasDeCambio;
     
     public ConversorMonedas() {
         tasasDeCambio = new HashMap<>(TASAS_PREDETERMINADAS);
@@ -68,7 +68,7 @@ public class ConversorMonedas {
                     if (keyValue.length == 2) {
                         String currency = keyValue[0].trim().replace("\"", "");
                         String valueStr = keyValue[1].trim();
-                        
+
                         // Solo procesamos las monedas que nos interesan
                         if (TASAS_PREDETERMINADAS.containsKey(currency)) {
                             try {
